@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>MentorBaba Quiz App - Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="login-bg">
+    <div class="container-box">
+        <div class="logo-section">
+            <h1 class="app-title">🧠 MentorBaba</h1>
+            <h2 class="app-subtitle">Quiz App - Result</h2>
+        </div>
+        
+        <div class="result-content">
+            <h2>🎉 Quiz Completed!</h2>
+            <div class="score-display">
+                <p>Your Score: <strong>{{ score }} / {{ total }}</strong></p>
+                <p>Correct: <strong>{{ correct }}</strong> | Wrong: <strong>{{ wrong }}</strong></p>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="/quiz" class="btn-primary">🔄 Take Quiz Again</a>
+                <a href="/login" class="btn-secondary">🏠 Back to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
