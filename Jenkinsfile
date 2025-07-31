@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "mentorbaba-quiz"
+        CONTAINER_NAME = "mentorbaba-container"
+    }
+
     stages {
         stage('Clone Code') {
             steps {
@@ -10,17 +15,19 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t mentorbabaa-app .'
-                }
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Stop Old Container') {
             steps {
-                script {
-                    sh 'docker run -d -p 8081:8080 --name mentorbabaa mentorbabaa-app || true'
-                }
+                sh 'docker rm -f $CONTAINER_NAME || true'
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                sh 'docker run -d -p 8080:8080 --name $CONTAINER_NAME $IMAGE_NAME'
             }
         }
     }
