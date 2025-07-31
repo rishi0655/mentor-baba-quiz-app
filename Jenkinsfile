@@ -27,7 +27,7 @@ pipeline {
 
         stage('Run New Container') {
             steps {
-                sh 'docker run -d -p 8080:8080 --name $CONTAINER_NAME $IMAGE_NAME'
+                sh 'docker run -d -p 5000:8080 --name mentorbaba-container mentorbaba-quiz'
             }
         }
     }
