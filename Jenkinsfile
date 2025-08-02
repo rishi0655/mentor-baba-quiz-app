@@ -2,13 +2,14 @@ pipeline {
     agent any
 
     environment {
-        FLASK_ENV = 'development'
+        FLASK_APP = "app.py"
+        FLASK_ENV = "development"
     }
 
     stages {
         stage('Clone Repo') {
             steps {
-                git branch: 'main', url: 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
+                git 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
             }
         }
 
@@ -16,8 +17,7 @@ pipeline {
             steps {
                 sh '''
                     python3 -m venv venv
-                    source venv/bin/activate
-                    pip install --upgrade pip
+                    . venv/bin/activate
                     pip install -r requirements.txt
                 '''
             }
@@ -26,8 +26,8 @@ pipeline {
         stage('Run Flask App') {
             steps {
                 sh '''
-                    source venv/bin/activate
-                    nohup python3 app.py &
+                    . venv/bin/activate
+                    nohup python3 app.py > output.log 2>&1 &
                 '''
             }
         }
