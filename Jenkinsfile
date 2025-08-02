@@ -4,25 +4,22 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/YOUR_USERNAME/mentor-baba-quiz-app.git'
+                git 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Install Dependencies') {
             steps {
-                script {
-                    dockerImage = docker.build("mentorbaba-quiz-app")
-                }
+                sh 'python3 -m pip install --break-system-packages -r requirements.txt'
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Run Flask App') {
             steps {
-                script {
-                    sh "docker rm -f quizapp || true"
-                    sh "docker run -d -p 5000:5000 --name quizapp mentorbaba-quiz-app"
-                }
+                sh 'fuser -k 5000/tcp || true'
+                sh 'nohup python3 app.py > output.log 2>&1 &'
             }
         }
     }
 }
+
