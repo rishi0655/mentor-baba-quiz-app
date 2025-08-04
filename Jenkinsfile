@@ -4,19 +4,27 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
+                git 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
             }
         }
 
         stage('Install Dependencies') {
             steps {
-                sh 'pip3 install -r requirements.txt'
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip install --upgrade pip
+                    pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Run Flask App') {
             steps {
-                sh 'nohup python3 app.py &'
+                sh '''
+                    . venv/bin/activate
+                    python app.py
+                '''
             }
         }
     }
