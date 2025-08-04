@@ -9,7 +9,8 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git 'https://github.com/rishi0655/mentor-baba-quiz-app.git' branch: 'main'
+                git branch: 'main', url: 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
+
             }
         }
 
