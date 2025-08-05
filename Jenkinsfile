@@ -4,7 +4,7 @@ pipeline {
     stages {
         stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
+                git url: 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
             }
         }
 
