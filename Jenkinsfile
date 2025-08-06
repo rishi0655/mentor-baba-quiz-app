@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "quizapp"
-        CONTAINER_NAME = "quizapp"
-        ENV_PATH = "/home/ubuntu/quiz_app/.env"
+        IMAGE_NAME = "mentor-baba-quiz-app"
+        CONTAINER_NAME = "mentor-baba-quiz-app"
+        ENV_PATH = "/home/ubuntu/mentor-baba-quiz-app/.env"
     }
 
     stages {
