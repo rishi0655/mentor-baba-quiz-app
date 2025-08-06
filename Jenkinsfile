@@ -1,31 +1,57 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "quizapp"
+        CONTAINER_NAME = "quizapp"
+        ENV_PATH = "/home/ubuntu/quiz_app/.env"
+    }
+
     stages {
         stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
+               git branch: 'main', url: 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build Docker Image') {
             steps {
-                sh '''
-                    fuser -k 5000/tcp || true
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install --upgrade pip
-                    pip install -r requirements.txt
-                '''
+                script {
+                    sh "docker build -t ${IMAGE_NAME}:latest ."
+                }
+            }
+        }
+        
+        stage("Push to Docker Hub"){
+            steps {
+                echo "Pushing the image to docker hub"
+                withCredentials([usernamePassword(credentialsId: 'dockerHub', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh """
+                        echo \$DOCKER_PASS | docker login -u \$DOCKER_USER --password-stdin
+                        docker tag ${IMAGE_NAME}:latest \$DOCKER_USER/quizapp:latest
+                        docker push \$DOCKER_USER/quizapp:latest
+                    """
+                }
             }
         }
 
-        stage('Run Flask App') {
+        stage('Stop Old Container (if running)') {
             steps {
-                sh '''
-                    . venv/bin/activate
-                    python app.py
-                '''
+                script {
+                    sh "docker rm -f ${CONTAINER_NAME} || true"
+                }
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                script {
+                    sh """
+                        docker run -d -p 5000:5000 \\
+                        --env-file=${ENV_PATH} \\
+                        --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+                    """
+                }
             }
         }
     }
