@@ -151,4 +151,4 @@ def result():
     return render_template('result.html', total=total, correct=correct, wrong=wrong, score=score, user_answers=user_answers)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
