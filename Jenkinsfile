@@ -1,73 +1,43 @@
 pipeline {
     agent any
-    
+
     environment {
-        DOCKER_IMAGE = 'mentorbaba-quiz-app'
-        DOCKER_TAG = "${BUILD_NUMBER}-${GIT_COMMIT.take(7)}"
-        DOCKER_REGISTRY = 'rishi0655'
+        IMAGE_NAME = "rishi0655/mentorbaba-quiz-app"
+        CONTAINER_NAME = "quiz-app"
     }
-    
+
     stages {
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                checkout scm
+               git branch: 'main', url: 'https://github.com/rishi0655/mentor-baba-quiz-app.git'
             }
         }
-        
-        stage('Build') {
+
+        stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}")
+                    sh "docker build -f Dockerfile_simple -t ${IMAGE_NAME}:simple ."
                 }
             }
         }
-        
-        stage('Test') {
+
+        stage('Stop Old Container (if running)') {
             steps {
                 script {
-                    sh 'python -m pytest tests/ || echo "No tests found"'
+                    sh "docker rm -f ${CONTAINER_NAME} || true"
                 }
             }
         }
-        
-        stage('Push to Registry') {
+
+        stage('Run New Container') {
             steps {
                 script {
-                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub-credentials') {
-                        docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}").push()
-                        docker.image("${DOCKER_REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}").push('latest')
-                    }
+                    sh """
+                        docker run -d -p 5000:5000 \\
+                        --name ${CONTAINER_NAME} ${IMAGE_NAME}:simple
+                    """
                 }
             }
-        }
-        
-        stage('Deploy to AWS') {
-            steps {
-                script {
-                    sh '''
-                        aws ecs update-service --cluster quiz-app-cluster --service quiz-app-service --force-new-deployment
-                    '''
-                }
-            }
-        }
-    }
-    
-    post {
-        success {
-            echo 'Pipeline succeeded!'
-            emailext (
-                subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: "Good news! The build succeeded.",
-                to: "your-email@example.com"
-            )
-        }
-        failure {
-            echo 'Pipeline failed!'
-            emailext (
-                subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
-                body: "Bad news! The build failed.",
-                to: "your-email@example.com"
-            )
         }
     }
 }
