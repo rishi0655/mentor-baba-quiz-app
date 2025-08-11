@@ -7,6 +7,11 @@ services:
       - "5000:5000"
     environment:
       - FLASK_ENV=production
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=rootpassword
+      - MYSQL_DB=quizdb
+      - MYSQL_PORT=3306
     depends_on:
       - mysql
     networks:
@@ -17,10 +22,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: quizdb
-      MYSQL_USER: quizuser
-      MYSQL_PASSWORD: quizpass
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
