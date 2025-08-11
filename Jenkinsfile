@@ -18,9 +18,12 @@ pipeline {
             steps {
                 echo 'Installing dependencies...'
                 sh '''
-                    python3 -m venv venv
-                    . venv/bin/activate
-                    pip install -r requirements.txt
+                    sudo apt install python3.12-venv -y || true
+                    python3 -m venv venv || pip3 install --break-system-packages -r requirements.txt
+                    if [ -d "venv" ]; then
+                        . venv/bin/activate
+                        pip install -r requirements.txt
+                    fi
                 '''
             }
         }
