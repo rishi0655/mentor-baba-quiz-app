@@ -1,3 +1,12 @@
-__pycache__/ 
-*.pyc 
-.env 
+__pycache__/
+*.pyc
+.env
+*.log
+.DS_Store
+.vscode/
+.idea/
+node_modules/
+dist/
+build/
+*.tmp
+*.swp

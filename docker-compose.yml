@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  quiz-app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+    depends_on:
+      - mysql
+    networks:
+      - quiz-network
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: quizdb
+      MYSQL_USER: quizuser
+      MYSQL_PASSWORD: quizpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - quiz-network
+
+volumes:
+  mysql_data:
+
+networks:
+  quiz-network:
+    driver: bridge
